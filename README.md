@@ -26,6 +26,11 @@
 
 ## Description
 
+This is a ecommerce project with role-based authentication;
+The tech stack is: MongoDb + mongoose, React hooks/Redux in Front end;
+TypeScript everywhere.
+
+
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
