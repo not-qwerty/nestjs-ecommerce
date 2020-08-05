@@ -4,11 +4,12 @@ import { Model } from 'mongoose';
 import { User } from 'src/types/user';
 import { RegisterDTO, LoginDTO } from '../auth/auth.dto';
 import * as bcrypt from 'bcrypt';
+import { Payload } from '../types/payload';
 
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel('User') private userModel: Model<User>) {}
+    constructor(@InjectModel('User') private userModel: Model<User>) { }
 
     private sanitizeUser(user: User) {
         return user.depopulate('password')
@@ -16,13 +17,13 @@ export class UserService {
 
     async create(userDTO: RegisterDTO): Promise<any> {
         console.log(userDTO);
-        
+
         const { username } = userDTO;
-        const user = await this.userModel.findOne({username});
+        const user = await this.userModel.findOne({ username });
 
         if (user) {
             throw new HttpException('User already exists',
-            HttpStatus.BAD_REQUEST)
+                HttpStatus.BAD_REQUEST)
         }
 
         const createdUser = new this.userModel(userDTO);
@@ -32,7 +33,7 @@ export class UserService {
 
     async findByLogin(userDTO: LoginDTO): Promise<any> {
         const { username, password } = userDTO;
-        const user = await this.userModel.findOne({username});
+        const user = await this.userModel.findOne({ username });
 
         if (!user) {
             throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
@@ -45,7 +46,7 @@ export class UserService {
         }
     }
 
-    async findByPayload(payload: any): Promise<any> {
+    async findByPayload(payload: Payload): Promise<any> {
         const { username } = payload;
         return await this.userModel.findOne({ username });
     }
