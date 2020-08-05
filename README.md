@@ -33,8 +33,6 @@ TypeScript everywhere.
 You can also find .env file in the root folder, I keep it in Github to ease the start of the project. The less starting configuration the better. In order to create & use your own database access the folowing [link](https://www.youtube.com/watch?v=KKyag6t98g8). Make sure you changed MONGO_URI then.
 
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
 ## Installation
 
 ```bash
