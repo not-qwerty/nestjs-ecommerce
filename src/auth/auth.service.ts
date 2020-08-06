@@ -7,11 +7,11 @@ import { Payload } from '../types/payload';
 export class AuthService {
     constructor(private userService: UserService) {}
 
-    async signPayload(payload: Payload) {
+    async signPayload(payload: Payload): Promise<any> {
         return sign(payload, 'secretKey', { expiresIn: '12h'})
     }
 
-    async validateUser(payload: Payload) {
+    async validateUser(payload: Payload): Promise<any> {
         return await this.userService.findByPayload(payload);
     }
 }
