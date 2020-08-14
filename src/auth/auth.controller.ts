@@ -11,8 +11,10 @@ export class AuthController {
 
     @Get()
     @UseGuards(AuthGuard('jwt'))
-    tempAuth() {
-        return { auth: 'works' }
+    tempAuth(): any {
+        console.log('bruh')
+
+        return { auth: 'works'};
     }
 
     @Post('login')
