@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface Address {
+export interface IAddress {
     addr1: string;
     addr2: string;
     city: string;
@@ -8,10 +8,10 @@ export interface Address {
     zip: number;
 }
 
-export interface User extends Document {
+export interface IUser extends Document {
     username: string;
     readonly password: string;
     seller: boolean;
-    address: Address;
+    address: IAddress;
     created: Date;
 }
