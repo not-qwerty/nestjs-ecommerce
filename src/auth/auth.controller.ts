@@ -12,7 +12,7 @@ export class AuthController {
     @Get()
     @UseGuards(AuthGuard('jwt'))
     tempAuth(): any {
-        console.log('bruh')
+        console.log('ok it is working, use "bearer token" in postman to check the token')
 
         return { auth: 'works'};
     }
