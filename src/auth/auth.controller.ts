@@ -11,14 +11,14 @@ export class AuthController {
 
     @Get()
     @UseGuards(AuthGuard('jwt'))
-    tempAuth(): any {
+    tempAuth(): { auth: string } {
         console.log('ok it is working, use "bearer token" in postman to check the token')
 
-        return { auth: 'works'};
+        return { auth: 'works' };
     }
 
     @Post('login')
-    async login(@Body() userDTO: LoginDTO): Promise<{ user: any; token: any; }> {
+    async login(@Body() userDTO: LoginDTO): Promise<{ user: LoginDTO; token: string; }> {
         const user = await this.userService.findByLogin(userDTO);
 
         const payload = {
@@ -31,7 +31,7 @@ export class AuthController {
     }
 
     @Post('register')
-    async register(@Body() userDTO: RegisterDTO): Promise<{ user: any; token: any; }> {
+    async register(@Body() userDTO: RegisterDTO): Promise<{ user: LoginDTO; token: string; }> {
         const user = await this.userService.create(userDTO);
 
         const payload = {
