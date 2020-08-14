@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-interface Address {
+export interface Address {
     addr1: string;
     addr2: string;
     city: string;
