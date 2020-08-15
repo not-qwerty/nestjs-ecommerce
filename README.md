@@ -18,6 +18,8 @@ If you need help configuring database please access the folowing [link](https://
 
 The application is still in developing, I'll add link to React project for frontend down bellow ASAP.
 
+Feel free to fork or create an issue.
+
 
 ## Installation
 
