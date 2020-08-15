@@ -5,57 +5,65 @@ import { IUser } from 'src/types/user';
 import { RegisterDTO, LoginDTO } from '../auth/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { Payload } from '../types/payload';
-
+import { ERROR_MESSAGES } from './const';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel('User') private userModel: Model<IUser>) { }
+  constructor(@InjectModel('User') private userModel: Model<IUser>) {}
 
-    private sanitizeUser(user: IUser) {
-        const sanitized = user.toObject();
-        delete sanitized['password'];
-        return sanitized;
+  private sanitizeUser(user: IUser) {
+    const sanitized = user.toObject();
+    delete sanitized['password'];
+    return sanitized;
+  }
+
+  async findAll(): Promise<IUser[]> {
+    return await this.userModel.find();
+  }
+
+  async findAllSellers(): Promise<IUser[]> {
+    return await this.userModel.find({ seller: true });
+  }
+
+  async create(userDTO: RegisterDTO): Promise<RegisterDTO> {
+    const { username } = userDTO;
+    const user = await this.userModel.findOne({ username });
+
+    if (user) {
+      throw new HttpException(
+        ERROR_MESSAGES.EXISTED_USER,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    async findAll(): Promise<IUser[]> {
-        return await this.userModel.find();
+    const createdUser = new this.userModel(userDTO);
+    await createdUser.save();
+    return this.sanitizeUser(createdUser);
+  }
+
+  async findByLogin(userDTO: LoginDTO): Promise<any> {
+    const { username, password } = userDTO;
+    const user = await this.userModel.findOne({ username });
+
+    if (!user) {
+      throw new HttpException(
+        ERROR_MESSAGES.INVALID_CREDENTIALS,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
-    async findAllSellers(): Promise<IUser[]> {
-        return await this.userModel.find({ seller: true })
+    if (await bcrypt.compare(password, user.password)) {
+      return this.sanitizeUser(user);
+    } else {
+      throw new HttpException(
+        ERROR_MESSAGES.INVALID_CREDENTIALS,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
+  }
 
-    async create(userDTO: RegisterDTO): Promise<RegisterDTO> {
-        const { username } = userDTO;
-        const user = await this.userModel.findOne({ username });
-
-        if (user) {
-            throw new HttpException('User already exists',
-                HttpStatus.BAD_REQUEST)
-        }
-
-        const createdUser = new this.userModel(userDTO);
-        await createdUser.save();
-        return this.sanitizeUser(createdUser)
-    }
-
-    async findByLogin(userDTO: LoginDTO): Promise<any> {
-        const { username, password } = userDTO;
-        const user = await this.userModel.findOne({ username });
-
-        if (!user) {
-            throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
-        }
-
-        if (await bcrypt.compare(password, user.password)) {
-            return this.sanitizeUser(user);
-        } else {
-            throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
-        }
-    }
-
-    async findByPayload(payload: Payload): Promise<any> {
-        const { username } = payload;
-        return await this.userModel.findOne({ username });
-    }
+  async findByPayload(payload: Payload): Promise<any> {
+    const { username } = payload;
+    return await this.userModel.findOne({ username });
+  }
 }
