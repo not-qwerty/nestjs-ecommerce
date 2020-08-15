@@ -10,7 +10,7 @@ export const ProductSchema = new mongoose.Schema({
     image: String,
     price: String,
     created: {
-        type: DataTransferItem,
+        type: Date,
         default: Date.now
-    }
+    },
 })
