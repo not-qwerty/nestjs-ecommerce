@@ -1,8 +1,8 @@
 import { Document } from 'mongoose';
-import { User } from './user';
+import { IUser } from './user';
 
 export interface Product extends Document {
-    owner: User;
+    owner: IUser;
     title: string;
     description: string;
     image: string;

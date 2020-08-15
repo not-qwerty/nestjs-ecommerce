@@ -1,5 +1,5 @@
 import { Product } from './product';
-import { User } from './user';
+import { IUser } from './user';
 import { Document } from 'mongoose';
 
 interface ProductOrder {
@@ -8,7 +8,7 @@ interface ProductOrder {
 }
 
 export interface Order extends Document {
-    owner: User;
+    owner: IUser;
     totalPrice: number;
     products: ProductOrder[];
     created: Date   
