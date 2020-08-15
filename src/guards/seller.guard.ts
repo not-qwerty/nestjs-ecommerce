@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { ERROR_MESSAGES } from '../shared/ERROR_MESSAGES';
 
 @Injectable()
 export class SellerGuard implements CanActivate {
@@ -13,6 +14,6 @@ export class SellerGuard implements CanActivate {
             return true;
         }
 
-        throw new HttpException('Unauthorized access', HttpStatus.UNAUTHORIZED);
+        throw new HttpException(ERROR_MESSAGES.UNAUTHORIZE, HttpStatus.UNAUTHORIZED);
     }
 }

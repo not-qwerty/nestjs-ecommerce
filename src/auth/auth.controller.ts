@@ -14,7 +14,7 @@ export class AuthController {
 
 
     // accessible to all authorized users
-    @Get('getAllUsers')
+    @Get('users')
     @UseGuards(AuthGuard('jwt'))
     async findAll(): Promise<IUser[]> {
         return await this.userService.findAll();
@@ -22,11 +22,11 @@ export class AuthController {
 
 
     // can be accessed only if user who made request is seller himself
-    @Get('getAllSellerUsers')
+    @Get('sellers')
     @UseGuards(AuthGuard('jwt'), SellerGuard)
     async findAllSellers(@User() user: IUser): Promise<IUser[]> {
         console.log(user);
-        
+
         return await this.userService.findAllSellers();
     }
 

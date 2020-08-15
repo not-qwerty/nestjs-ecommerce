@@ -5,6 +5,7 @@ import { IUser } from 'src/types/user';
 import { RegisterDTO, LoginDTO } from '../auth/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { Payload } from '../types/payload';
+import { ERROR_MESSAGES } from './ERROR_MESSAGES';
 
 
 @Injectable()
@@ -30,7 +31,7 @@ export class UserService {
         const user = await this.userModel.findOne({ username });
 
         if (user) {
-            throw new HttpException('User already exists',
+            throw new HttpException(ERROR_MESSAGES.EXISTED_USER,
                 HttpStatus.BAD_REQUEST)
         }
 
@@ -44,13 +45,13 @@ export class UserService {
         const user = await this.userModel.findOne({ username });
 
         if (!user) {
-            throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+            throw new HttpException(ERROR_MESSAGES.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
         }
 
         if (await bcrypt.compare(password, user.password)) {
             return this.sanitizeUser(user);
         } else {
-            throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
+            throw new HttpException(ERROR_MESSAGES.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
         }
     }
 
