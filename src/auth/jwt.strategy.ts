@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
 
 import { AuthService } from './auth.service';
 import { Payload } from '../types/payload';
+import { ERROR_MESSAGES } from '../shared/ERROR_MESSAGES';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
         if (!user) {
             return done(
-                new HttpException('Unauthorized access', HttpStatus.UNAUTHORIZED),
+                new HttpException(ERROR_MESSAGES.UNAUTHORIZE, HttpStatus.UNAUTHORIZED),
                 false
             )
         }
