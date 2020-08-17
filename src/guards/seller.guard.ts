@@ -6,11 +6,13 @@ export class SellerGuard implements CanActivate {
 
     constructor() { }
 
-    canActivate(context: ExecutionContext): boolean {
+    canActivate(
+        context: ExecutionContext
+        ): boolean | Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const user = request.user;
 
-        if (user && user.seller) {
+        if (user.seller) {
             return true;
         }
 

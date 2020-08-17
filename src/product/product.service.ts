@@ -1,20 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product } from 'src/types/product';
+
+import { Product } from '../types/product';
+import { IUser } from '../types/user';
 import { CreateProductDTO, UpdateProductDTO } from './product.dto';
-import { IUser } from 'src/types/user';
+import { ERROR_MESSAGES } from '../shared/ERROR_MESSAGES';
 
 @Injectable()
 export class ProductService {
     constructor(@InjectModel('Product') private productModel: Model<Product>) { }
 
     async findAll(): Promise<Product[]> {
-        return await this.productModel.find();
+        return await this.productModel.find().populate('owner', '-password');
     }
 
-    async findOne(id: string): Promise<Product> {
-        return await this.productModel.findById(id);
+    async findByOwner(userId: string): Promise<Product[]> {
+        return await this.productModel.find({ owner: userId }).populate('owner', '-password');
+    }
+
+    async findById(id: string): Promise<Product> {
+        const product = await this.productModel.findById(id).populate('owner', '-password');
+        if (!product) {
+            throw new HttpException(ERROR_MESSAGES.PRODUCT_NOT_FOUND, HttpStatus.NO_CONTENT);
+        }
+        return product;
     }
 
     async create(productDTO: CreateProductDTO, user: IUser): Promise<Product> {
@@ -23,16 +33,34 @@ export class ProductService {
             owner: user,
         });
         await product.save();
-        return product;
+        return product.populate('owner', '-password');
     }
 
-    async update(id: string, productDTO: UpdateProductDTO): Promise<Product> {
-        const product = await this.productModel.findByIdAndUpdate(id, productDTO);
-        return product;
+    async update(
+        id: string,
+        productDTO: UpdateProductDTO,
+        userId: string,
+    ): Promise<Product> {
+        const product = await this.productModel.findById(id);
+        if (userId !== product.owner.toString()) {
+            throw new HttpException(
+                ERROR_MESSAGES.NOT_OWNING_PRODUCT,
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+        await product.update(productDTO);
+        return await this.productModel.findById(id).populate('owner', '-password');
     }
 
-    async delete(id: string): Promise<Product> {
-        return await this.productModel.findByIdAndRemove(id);
+    async delete(id: string, userId: string): Promise<Product> {
+        const product = await this.productModel.findById(id);
+        if (userId !== product.owner.toString()) {
+            throw new HttpException(
+                ERROR_MESSAGES.NOT_OWNING_PRODUCT,
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+        await product.remove();
+        return product.populate('owner', '-password');
     }
-    
 }
