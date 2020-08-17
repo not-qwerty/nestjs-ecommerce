@@ -9,7 +9,10 @@ export class OrderService {
     constructor(@InjectModel('Order') private readonly orderModel: Model<Order>) { }
 
     async getOrdersByUser(userId: string): Promise<Order[]> {
-        const orders = await this.orderModel.find({ owner: userId }).populate('owner', '-password').populate('products.product');
+        const orders = await this.orderModel
+                                    .find({ owner: userId })
+                                    .populate('owner', '-password')
+                                    .populate('products.product');
 
         if (!orders) {
             throw new NotFoundException('No orders found');
@@ -22,9 +25,10 @@ export class OrderService {
             owner: userId,
             products: orderDTO.products,
         }
+
         const { _id } = await this.orderModel.create(createOrder);
 
-        let order = await (await this.orderModel.findById(_id)).populated('products.product');
+        let order = await this.orderModel.findById(_id).populate('products.product');
 
         const totalPrice = order.products.reduce((acc, product) => {
             const price = product.product.price * product.quantity;
@@ -33,9 +37,9 @@ export class OrderService {
         await order.update({ totalPrice });
 
         order = await this.orderModel
-            .findById(_id)
-            .populate('owner')
-            .populate('products.product');
+                            .findById(_id)
+                            .populate('owner')
+                            .populate('products.product');
 
         return order;
     }

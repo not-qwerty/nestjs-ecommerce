@@ -1,9 +1,11 @@
-import { IUser } from 'src/types/user';
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/utilities/user.decorator';
 import { OrderService } from './order.service';
 import { CreateOrderDTO } from './dto/create-order.dto';
+import { Order } from './../types/order';
+import { IUser } from 'src/types/user';
+
 
 @Controller('order')
 export class OrderController {
@@ -11,7 +13,7 @@ export class OrderController {
     
     @Get()
     @UseGuards(AuthGuard('jwt'))
-    getOrders(@User() { id }: IUser) {
+    getOrders(@User() { id }: IUser): Promise<Order[]> {
         return this.orderService.getOrdersByUser(id);
     }
 
@@ -20,7 +22,7 @@ export class OrderController {
     createOrder(
         @Body() order: CreateOrderDTO,
         @User() { id }: IUser
-        ) {
+        ): Promise<Order> {
             return this.orderService.createOrder(order, id);
     }
 }
