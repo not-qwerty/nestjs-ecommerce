@@ -5,7 +5,7 @@ import { UserService } from '../shared/user.service';
 import { LoginDTO, RegisterDTO } from './auth.dto';
 import { AuthService } from './auth.service';
 import { SellerGuard } from '../guards/seller.guard';
-import { User } from 'src/utilities/user.decorator';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
