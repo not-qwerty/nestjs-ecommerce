@@ -11,9 +11,9 @@ export class OrderService {
 
     async getOrdersByUser(userId: string): Promise<IOrder[]> {
         const orders = await this.orderModel
-                                    .find({ owner: userId })
-                                    .populate('owner', '-password')
-                                    .populate('products.product');
+            .find({ owner: userId })
+            .populate('owner', '-password')
+            .populate('products.product');
 
         if (!orders) {
             throw new NotFoundException('No orders found');
@@ -21,29 +21,29 @@ export class OrderService {
         return orders;
     }
 
-    // async createOrder(orderDTO: CreateOrderDTO, userId: string): PromiseOrder> {
+    async createOrder(orderDTO: CreateOrderDTO, userId: string): Promise<IOrder> {
+        const createOrder = {
+            owner: userId,
+            products: orderDTO.products,
+        };
+
+        const { _id } = await this.orderModel.create(createOrder);
+
+        let order = await this.orderModel.findById(_id).populate('products.product');
+
+        const totalPrice = order.products.reduce((acc, product) => {
+            const price = product.product.price * product.quantity;
+            return acc + price;
+        }, 0);
         
-    //     const createOrder = {
-    //         owner: userId,
-    //         products: { products, quantity };
-    //     };
+        await order.update({ totalPrice });
 
-    //     const res = await this.orderModel.create(createOrder);
+        order = await this.orderModel
+                            .findById(_id)
+                            .populate('owner')
+                            .populate('products.product');
 
-    //     // let order = await this.orderModel.findById(_id).populate('products.product');
-
-    //     // const totalPrice = order.products.reduce((acc, product) => {
-    //     //     const price = product.product.price * product.quantity;
-    //     //     return acc + price;
-    //     // }, 0);
-    //     // await order.update({ totalPrice });
-
-    //     // order = await this.orderModel
-    //     //                     .findById(_id)
-    //     //                     .populate('owner')
-    //     //                     .populate('products.product');
-
-    //     return order;
-    // }
+        return order;
+    }
 
 }
