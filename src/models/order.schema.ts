@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 export const OrderSchema = new mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
+        ref: 'User',
     },
     totalPrice: {
         type: Number,
@@ -11,9 +11,9 @@ export const OrderSchema = new mongoose.Schema({
     },
     products: [
         {
-            product : {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product'
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product'
             },
             quantity: {
                 type: Number,

@@ -17,7 +17,7 @@ import { User } from '../utilities/user.decorator';
 import { CreateProductDTO, UpdateProductDTO } from './product.dto';
 import { ProductService } from './product.service';
 
-@Controller('product')
+@Controller('products')
 export class ProductController {
     constructor(private productService: ProductService) { }
 
