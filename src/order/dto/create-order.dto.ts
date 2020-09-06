@@ -1,6 +1,5 @@
+ import { IProductOrder } from '../../types/order';
+
 export interface CreateOrderDTO {
-    products: {
-      product: string;
-      quantity: number;
-    }[];
+    products: IProductOrder[];
   }
