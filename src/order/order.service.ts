@@ -21,29 +21,59 @@ export class OrderService {
         return orders;
     }
 
-    async createOrder(orderDTO: CreateOrderDTO, userId: string): Promise<IOrder> {
-        const createOrder = {
-            owner: userId,
-            products: orderDTO.products,
-        };
-
-        const { _id } = await this.orderModel.create(createOrder);
-
-        let order = await this.orderModel.findById(_id).populate('products.product');
-
-        const totalPrice = order.products.reduce((acc, product) => {
-            const price = product.product.price * product.quantity;
-            return acc + price;
-        }, 0);
+    async createOrder(orderDTO: CreateOrderDTO, userId: string): Promise<any> {
+        try {
         
-        await order.update({ totalPrice });
+            const { products } = orderDTO;
+            console.log(products);
+        
 
-        order = await this.orderModel
-                            .findById(_id)
-                            .populate('owner')
-                            .populate('products.product');
+        const { _id } = await this.orderModel.create({
+            owner: userId,
+            products: products,
+            totalPrice: 50,
+            created: Date.now(),
+        });
 
-        return order;
+        const order = await this.orderModel.findById(_id);
+        console.log(order);
+        
+
+        
+
+        // return createOrder;
+
+
+        } catch (err) {
+            console.log(err);
+            
+        }
+        
+
+        // let order = await this.orderModel.findById(_id).populate('products.product');
+
+    //     const totalPrice = order.products.reduce((acc, product) => {
+    //         const price = product.product.price * product.quantity;
+    //         return acc + price;
+    //     }, 0);
+        
+    //     await order.update({ totalPrice });
+
+    //     order = await this.orderModel
+    //                         .findById(_id)
+    //                         .populate('owner')
+    //                         .populate('products.product');
+
     }
 
 }
+
+// Example of body JSON for create order
+// {
+//     "products": [
+//         {
+//             "product": "5f386470d0ffc63b64642258",
+//             "quantity": 2
+//         }
+//     ]
+// }
