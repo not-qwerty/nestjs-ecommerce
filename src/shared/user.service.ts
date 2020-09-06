@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { IUser } from 'src/types/user';
 import { RegisterDTO, LoginDTO } from '../auth/auth.dto';
 import * as bcrypt from 'bcrypt';
-import { Payload } from '../types/payload';
+import { IPayload } from '../types/payload';
 import { ERROR_MESSAGES } from './ERROR_MESSAGES';
 
 
@@ -55,7 +55,7 @@ export class UserService {
         }
     }
 
-    async findByPayload(payload: Payload): Promise<any> {
+    async findByPayload(payload: IPayload): Promise<any> {
         const { username } = payload;
         return await this.userModel.findOne({ username });
     }
