@@ -11,7 +11,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 import { SellerGuard } from '../guards/seller.guard';
-import { Product } from '../types/product';
+import { IProduct } from '../types/product';
 import { IUser as UserDocument } from '../types/user';
 import { User } from '../utilities/user.decorator';
 import { CreateProductDTO, UpdateProductDTO } from './product.dto';
@@ -22,19 +22,19 @@ export class ProductController {
     constructor(private productService: ProductService) { }
 
     @Get()
-    async getAll(): Promise<Product[]> {
+    async getAll(): Promise<IProduct[]> {
         return await this.productService.findAll();
     }
 
     @Get('/mine')
     @UseGuards(AuthGuard('jwt'), SellerGuard)
-    async getMine(@User() user: UserDocument): Promise<Product[]> {
+    async getMine(@User() user: UserDocument): Promise<IProduct[]> {
         const { id } = user;
         return await this.productService.findByOwner(id);
     }
 
     @Get('/seller/:id')
-    async getBySeller(@Param('id') id: string): Promise<Product[]> {
+    async getBySeller(@Param('id') id: string): Promise<IProduct[]> {
         return await this.productService.findByOwner(id);
     }
 
@@ -43,12 +43,12 @@ export class ProductController {
     async create(
         @Body() product: CreateProductDTO,
         @User() user: UserDocument,
-    ): Promise<Product> {
+    ): Promise<IProduct> {
         return await this.productService.create(product, user);
     }
 
     @Get(':id')
-    async read(@Param('id') id: string): Promise<Product> {
+    async read(@Param('id') id: string): Promise<IProduct> {
         return await this.productService.findById(id);
     }
 
@@ -58,7 +58,7 @@ export class ProductController {
         @Param('id') id: string,
         @Body() product: UpdateProductDTO,
         @User() user: UserDocument,
-    ): Promise<Product> {
+    ): Promise<IProduct> {
         const { id: userId } = user;
         return await this.productService.update(id, product, userId);
     }
@@ -68,7 +68,7 @@ export class ProductController {
     async delete(
         @Param('id') id: string,
         @User() user: UserDocument,
-    ): Promise<Product> {
+    ): Promise<IProduct> {
         const { id: userId } = user;
         return await this.productService.delete(id, userId);
     }

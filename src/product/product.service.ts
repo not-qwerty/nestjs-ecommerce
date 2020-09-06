@@ -2,24 +2,24 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Product } from '../types/product';
+import { IProduct } from '../types/product';
 import { IUser } from '../types/user';
 import { CreateProductDTO, UpdateProductDTO } from './product.dto';
 import { ERROR_MESSAGES } from '../shared/ERROR_MESSAGES';
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectModel('Product') private productModel: Model<Product>) { }
+    constructor(@InjectModel('Product') private productModel: Model<IProduct>) { }
 
-    async findAll(): Promise<Product[]> {
+    async findAll(): Promise<IProduct[]> {
         return await this.productModel.find().populate('owner', '-password');
     }
 
-    async findByOwner(userId: string): Promise<Product[]> {
+    async findByOwner(userId: string): Promise<IProduct[]> {
         return await this.productModel.find({ owner: userId }).populate('owner', '-password');
     }
 
-    async findById(id: string): Promise<Product> {
+    async findById(id: string): Promise<IProduct> {
         const product = await this.productModel.findById(id).populate('owner', '-password');
         if (!product) {
             throw new HttpException(ERROR_MESSAGES.PRODUCT_NOT_FOUND, HttpStatus.NO_CONTENT);
@@ -27,7 +27,7 @@ export class ProductService {
         return product;
     }
 
-    async create(productDTO: CreateProductDTO, user: IUser): Promise<Product> {
+    async create(productDTO: CreateProductDTO, user: IUser): Promise<IProduct> {
         const product = await this.productModel.create({
             ...productDTO,
             owner: user,
@@ -40,7 +40,7 @@ export class ProductService {
         id: string,
         productDTO: UpdateProductDTO,
         userId: string,
-    ): Promise<Product> {
+    ): Promise<IProduct> {
         const product = await this.productModel.findById(id);
         if (userId !== product.owner.toString()) {
             throw new HttpException(
@@ -52,7 +52,7 @@ export class ProductService {
         return await this.productModel.findById(id).populate('owner', '-password');
     }
 
-    async delete(id: string, userId: string): Promise<Product> {
+    async delete(id: string, userId: string): Promise<IProduct> {
         const product = await this.productModel.findById(id);
         if (userId !== product.owner.toString()) {
             throw new HttpException(
