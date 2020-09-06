@@ -11,5 +11,5 @@ export interface Order extends Document {
     owner: IUser["username"];
     totalPrice: number;
     products: ProductOrder[];
-    created: Date   
+    created: Date;
 }
