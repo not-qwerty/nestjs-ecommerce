@@ -13,7 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { SellerGuard } from '../guards/seller.guard';
 import { IProduct } from '../types/product';
 import { IUser as UserDocument } from '../types/user';
-import { User } from '../utilities/user.decorator';
+import { User } from '../decorators/user.decorator';
 import { CreateProductDTO, UpdateProductDTO } from './product.dto';
 import { ProductService } from './product.service';
 
