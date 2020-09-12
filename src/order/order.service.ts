@@ -11,9 +11,9 @@ export class OrderService {
 
     async getOrdersByUser(userId: string): Promise<IOrder[]> {
         const orders = await this.orderModel
-                                    .find({ owner: userId })
-                                    .populate('owner', '-password')
-                                    .populate('products.product');
+            .find({ owner: userId })
+            .populate('owner', '-password')
+            .populate('products.product');
 
         if (!orders) {
             throw new NotFoundException('No orders found');
@@ -21,29 +21,59 @@ export class OrderService {
         return orders;
     }
 
-    // async createOrder(orderDTO: CreateOrderDTO, userId: string): PromiseOrder> {
+    async createOrder(orderDTO: CreateOrderDTO, userId: string): Promise<any> {
+        try {
         
-    //     const createOrder = {
-    //         owner: userId,
-    //         products: { products, quantity };
-    //     };
+            const { products } = orderDTO;
+            console.log(products);
+        
 
-    //     const res = await this.orderModel.create(createOrder);
+        const { _id } = await this.orderModel.create({
+            owner: userId,
+            products: products,
+            totalPrice: 50,
+            created: Date.now(),
+        });
 
-    //     // let order = await this.orderModel.findById(_id).populate('products.product');
+        const order = await this.orderModel.findById(_id);
+        console.log(order);
+        
 
-    //     // const totalPrice = order.products.reduce((acc, product) => {
-    //     //     const price = product.product.price * product.quantity;
-    //     //     return acc + price;
-    //     // }, 0);
-    //     // await order.update({ totalPrice });
+        
 
-    //     // order = await this.orderModel
-    //     //                     .findById(_id)
-    //     //                     .populate('owner')
-    //     //                     .populate('products.product');
+        // return createOrder;
 
-    //     return order;
-    // }
+
+        } catch (err) {
+            console.log(err);
+            
+        }
+        
+
+        // let order = await this.orderModel.findById(_id).populate('products.product');
+
+    //     const totalPrice = order.products.reduce((acc, product) => {
+    //         const price = product.product.price * product.quantity;
+    //         return acc + price;
+    //     }, 0);
+        
+    //     await order.update({ totalPrice });
+
+    //     order = await this.orderModel
+    //                         .findById(_id)
+    //                         .populate('owner')
+    //                         .populate('products.product');
+
+    }
 
 }
+
+// Example of body JSON for create order
+// {
+//     "products": [
+//         {
+//             "product": "5f386470d0ffc63b64642258",
+//             "quantity": 2
+//         }
+//     ]
+// }
